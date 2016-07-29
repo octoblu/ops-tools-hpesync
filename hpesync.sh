@@ -1,7 +1,7 @@
 #!/bin/bash
 
 describe_aws_instance() {
-  aws ec2 describe-instances \
+  aws ec2 describe-instances --region='us-east-1' \
     --filters "Name=tag:Name,Values=service-hpe-cluster"
 }
 
