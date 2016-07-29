@@ -15,12 +15,12 @@ get_hpe_ip(){
 establish_ssh_tunnel(){
   local ip_address="$1"
 
-  ssh -t -t -L 74000:localhost:2379 "core@$ip_address" &> /dev/null
+  ssh -t -t -L 62333:localhost:2379 "core@$ip_address" &> /dev/null
 }
 
 kill_ssh_tunnel_job() {
   local parent_pid="$1"
-  pkill -P "$parent_pid" -f 'ssh -t -t -L 74000:localhost:2379'
+  pkill -P "$parent_pid" -f 'ssh -t -t -L 62333:localhost:2379'
 }
 
 do_etcd_sync(){
@@ -33,7 +33,7 @@ do_etcd_sync(){
     ETCDSYNC_TABLE=true \
     ETCDSYNC_INCLUDE_DIRECTORIES=true \
     etcdsync \
-      --etcd-uri http://localhost:74000 \
+      --etcd-uri http://localhost:62333 \
       --local-path "$HOME/Projects/Octoblu/the-stack-env-production/hpe/etcd" \
       --namespace "$full_namespace" \
       "$cmd"
@@ -43,7 +43,7 @@ wait_for_tunnel() {
   local tunnel_open="1"
   while [ "$tunnel_open" != "0" ]; do
     echo -n "."
-    curl http://localhost:74000 &> /dev/null
+    curl http://localhost:62333 &> /dev/null
     tunnel_open="$?"
     sleep 0.25
   done
@@ -51,7 +51,7 @@ wait_for_tunnel() {
 }
 
 assert_port_free() {
-  curl http://localhost:74000 &> /dev/null
+  curl http://localhost:62333 &> /dev/null
   local exit_code="$?"
   if [ "$exit_code" == "0" ]; then
     echo "Port 74000 seems to be in use, cowardly refusing to do anything"
